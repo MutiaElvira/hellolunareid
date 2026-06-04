@@ -167,9 +167,9 @@ async def upload_photo(
     try:
         contents = await file.read()
         
-        # Max file size 1MB (1,048,576 bytes)
-        if len(contents) > 1 * 1024 * 1024:
-            raise HTTPException(status_code=400, detail="File size exceeds 1MB limit")
+        # Max file size 5MB (5,242,880 bytes)
+        if len(contents) > 5 * 1024 * 1024:
+            raise HTTPException(status_code=400, detail="File size exceeds 5MB limit")
             
         encoded = base64.b64encode(contents).decode("utf-8")
         content_type = file.content_type or "image/png"

@@ -13,6 +13,58 @@ const calculateAge = (birthDate) => {
   return dayjs().diff(dayjs(birthDate), "year");
 };
 
+const compressImage = (file, maxWidth = 400, maxHeight = 400, quality = 0.7) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              const compressedFile = new File([blob], file.name, {
+                type: file.type || "image/jpeg",
+                lastModified: Date.now(),
+              });
+              resolve(compressedFile);
+            } else {
+              reject(new Error("Canvas toBlob failed"));
+            }
+          },
+          file.type || "image/jpeg",
+          quality
+        );
+      };
+      img.onerror = (err) => reject(err);
+    };
+    reader.onerror = (err) => reject(err);
+  });
+};
+
 function Profile() {
   const { user, refreshProfile } = useAuth();
   const { periods, prediction, avgCycleLength, nextPeriodDate } = usePeriods();
@@ -99,12 +151,15 @@ function Profile() {
     
     setIsUploading(true);
     try {
-      await authService.uploadProfilePhoto(file);
+      // Compress the image before uploading to reduce database storage size
+      const compressedFile = await compressImage(file);
+      await authService.uploadProfilePhoto(compressedFile);
       await refreshProfile();
       showAlert("Success", "Profile picture updated!", "info");
     } catch (error) {
       console.error(error);
-      showAlert("Error", "Failed to upload photo. Please try again.", "error");
+      const errMsg = error.response?.data?.detail || "Failed to upload photo. Please try again.";
+      showAlert("Error", errMsg, "error");
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
