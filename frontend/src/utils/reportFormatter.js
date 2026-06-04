@@ -8,20 +8,39 @@ export const formatReportDateTime = (date) => {
   return dayjs(date).format("DD MMMM YYYY, HH:mm");
 };
 
-export const calculateMoodDistribution = (moods) => {
-  const moodCounts = {};
-  let totalMoodsCount = 0;
-  
-  moods.forEach((m) => {
-    moodCounts[m.mood_type] = (moodCounts[m.mood_type] || 0) + 1;
-    totalMoodsCount++;
-  });
-
-  return { moodCounts, totalMoodsCount };
+export const SYMPTOM_LABELS = {
+  cramps: "Kram Perut 😫",
+  headache: "Sakit Kepala 🤕",
+  bloating: "Kembung 🎈",
+  fatigue: "Kelelahan 😴",
+  acne: "Jerawat 🔴",
+  breast_tenderness: "Nyeri Payudara 🍈",
+  insomnia: "Insomnia 👁️",
+  mood_swings: "Perubahan Mood 📈",
+  anxiety: "Cemas 😰",
+  depressed: "Sedih / Depresi 😢",
 };
 
-export const getRecentNotes = (moods, limit = 3) => {
-  return moods.filter(m => m.note).slice(0, limit);
+export const calculateSymptomDistribution = (symptoms) => {
+  const symptomCounts = {};
+  let totalLogs = 0;
+
+  symptoms.forEach((s) => {
+    Object.keys(SYMPTOM_LABELS).forEach((key) => {
+      if (s[key] && s[key] !== "") {
+        symptomCounts[key] = (symptomCounts[key] || 0) + 1;
+        totalLogs++;
+      }
+    });
+  });
+
+  return { symptomCounts, totalLogs };
+};
+
+export const getRecentNotes = (symptoms, limit = 3) => {
+  return symptoms
+    .filter((s) => s.note && s.note.trim() !== "")
+    .slice(0, limit);
 };
 
 export const getHealthTips = (prediction) => {

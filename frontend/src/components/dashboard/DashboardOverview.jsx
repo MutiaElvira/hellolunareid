@@ -10,13 +10,28 @@ function DashboardOverview({
   phaseInfo,
   nextPeriodDate,
   avgCycleLength,
-  todayMood,
-  getMoodEmoji,
+  todaySymptom,
   isPeriodDay,
   isPredictedDay,
   isFertileDay,
   isOvulationDay,
 }) {
+  const getActiveSymptomCount = (symptom) => {
+    if (!symptom) return null;
+    const keys = [
+      "cramps", "headache", "bloating", "fatigue", "acne",
+      "breast_tenderness", "insomnia", "mood_swings", "anxiety", "depressed"
+    ];
+    return keys.filter(k => symptom[k] && symptom[k] !== "").length;
+  };
+
+  const symptomCount = getActiveSymptomCount(todaySymptom);
+  const todaySymptomText = symptomCount === null
+    ? "Belum Dicatat"
+    : symptomCount === 0
+      ? "Bebas Gejala 🌸"
+      : `${symptomCount} Gejala Terdeteksi`;
+
   return (
     <>
       {/* HEADER */}
@@ -58,8 +73,8 @@ function DashboardOverview({
           icon={<FaHeart className="text-purple-400" />}
         />
         <StatsCard
-          title="Today's Mood"
-          value={todayMood ? `${getMoodEmoji(todayMood.mood_type)} ${todayMood.mood_type}` : "Not logged"}
+          title="Gejala Hari Ini"
+          value={todaySymptomText}
           color="bg-rose-50"
           icon={<FaSmile className="text-rose-400" />}
         />

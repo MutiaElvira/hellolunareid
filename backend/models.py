@@ -19,7 +19,7 @@ class User(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     periods = relationship("Period", back_populates="user")
-    moods = relationship("Mood", back_populates="user")
+    symptoms = relationship("Symptom", back_populates="user")
 
 
 class Period(Base):
@@ -34,28 +34,25 @@ class Period(Base):
     user = relationship("User", back_populates="periods")
 
 
-class Mood(Base):
-    __tablename__ = "moods"
+class Symptom(Base):
+    __tablename__ = "symptoms"
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     date = Column(Date, nullable=False)
-    mood_type = Column(String(50), nullable=False)
+    
+    cramps = Column(String(50), nullable=True)
+    headache = Column(String(50), nullable=True)
+    bloating = Column(String(50), nullable=True)
+    fatigue = Column(String(50), nullable=True)
+    acne = Column(String(50), nullable=True)
+    breast_tenderness = Column(String(50), nullable=True)
+    
+    insomnia = Column(String(50), nullable=True)
+    mood_swings = Column(String(50), nullable=True)
+    anxiety = Column(String(50), nullable=True)
+    depressed = Column(String(50), nullable=True)
+    
     note = Column(Text, nullable=True)
 
-    user = relationship("User", back_populates="moods")
-
-
-class Message(Base):
-    __tablename__ = "messages"
-
-    id = Column(Integer, primary_key=True, index=True)
-    sender_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    receiver_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    text = Column(Text, nullable=True)
-    img_url = Column(Text, nullable=True)
-    is_read = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
-
-    sender = relationship("User", foreign_keys=[sender_id])
-    receiver = relationship("User", foreign_keys=[receiver_id])
+    user = relationship("User", back_populates="symptoms")

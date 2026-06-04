@@ -6,13 +6,12 @@ import ReportPreview from "./ReportPreview";
 function HealthReport({
   profile,
   periods,
-  moods,
+  symptoms,
   prediction,
   avgCycleLength,
   avgDuration,
   nextPeriodDate,
   futurePredictions,
-  getMoodEmoji,
   showAlert,
 }) {
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
@@ -23,7 +22,7 @@ function HealthReport({
       await generatePDFReport({
         profile,
         periods,
-        moods,
+        symptoms,
         prediction,
         avgCycleLength,
         avgDuration,
@@ -43,7 +42,7 @@ function HealthReport({
       <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 className="text-4xl font-bold mb-2">Laporan Kesehatan</h1>
-          <p className="text-gray-500">Unduh rangkuman siklus dan suasana hati Anda</p>
+          <p className="text-gray-500">Unduh rangkuman siklus dan gejala kesehatan Anda</p>
         </div>
         <button
           onClick={handleDownloadPDF}
@@ -58,10 +57,9 @@ function HealthReport({
       <ReportPreview
         profile={profile}
         periods={periods}
-        moods={moods}
+        symptoms={symptoms}
         prediction={prediction}
         avgCycleLength={avgCycleLength}
-        getMoodEmoji={getMoodEmoji}
       />
     </>
   );

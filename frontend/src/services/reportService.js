@@ -2,10 +2,23 @@ import jsPDF from "jspdf";
 import dayjs from "dayjs";
 import { getHealthTips } from "../utils/reportFormatter";
 
+const SYMPTOM_LABELS = {
+  cramps: "Kram Perut 😫",
+  headache: "Sakit Kepala 🤕",
+  bloating: "Kembung 🎈",
+  fatigue: "Kelelahan 😴",
+  acne: "Jerawat 🔴",
+  breast_tenderness: "Nyeri Payudara 🍈",
+  insomnia: "Insomnia 👁️",
+  mood_swings: "Perubahan Mood 📈",
+  anxiety: "Cemas 😰",
+  depressed: "Sedih / Depresi 😢",
+};
+
 export const generatePDFReport = async ({
   profile,
   periods,
-  moods,
+  symptoms,
   prediction,
   avgCycleLength,
   avgDuration,
@@ -184,7 +197,7 @@ export const generatePDFReport = async ({
     y += 8;
   }
 
-  // ── SECTION: MOOD ANALYSIS ──
+  // ── SECTION: SYMPTOM ANALYSIS ──
   checkPageBreak(30);
   pdf.setDrawColor(243, 232, 255);
   pdf.line(margin, y, pageWidth - margin, y);
@@ -193,35 +206,40 @@ export const generatePDFReport = async ({
   pdf.setFontSize(14);
   pdf.setFont("helvetica", "bold");
   pdf.setTextColor(59, 47, 74);
-  pdf.text("Analisis Suasana Hati", margin + 9, y + 4);
+  pdf.text("Ringkasan Gejala Harian", margin + 9, y + 4);
   y += 14;
 
-  const moodCounts = {};
-  let totalMoodsCount = 0;
-  moods.forEach((m) => {
-    moodCounts[m.mood_type] = (moodCounts[m.mood_type] || 0) + 1;
-    totalMoodsCount++;
+  const symptomCounts = {};
+  let totalLogs = 0;
+  symptoms.forEach((s) => {
+    Object.keys(SYMPTOM_LABELS).forEach((key) => {
+      if (s[key] && s[key] !== "") {
+        symptomCounts[key] = (symptomCounts[key] || 0) + 1;
+        totalLogs++;
+      }
+    });
   });
 
-  if (totalMoodsCount === 0) {
+  if (totalLogs === 0) {
     pdf.setFontSize(10);
     pdf.setFont("helvetica", "italic");
     pdf.setTextColor(160, 160, 160);
-    pdf.text("Belum ada jurnal suasana hati.", margin, y + 5);
+    pdf.text("Belum ada catatan gejala harian.", margin, y + 5);
     y += 14;
   } else {
-    // Mood bars
-    Object.entries(moodCounts).forEach(([type, count]) => {
+    // Symptom bars
+    Object.entries(symptomCounts).forEach(([key, count]) => {
       checkPageBreak(12);
-      const percentage = Math.round((count / totalMoodsCount) * 100);
+      const percentage = Math.round((count / symptoms.length) * 100);
+      const label = SYMPTOM_LABELS[key] || key;
       pdf.setFontSize(9);
       pdf.setFont("helvetica", "normal");
       pdf.setTextColor(80, 75, 90);
-      pdf.text(type, margin + 4, y + 5);
+      pdf.text(label, margin + 4, y + 5);
 
       // Bar background
-      const barX = margin + 40;
-      const barWidth = contentWidth - 65;
+      const barX = margin + 50;
+      const barWidth = contentWidth - 75;
       pdf.setFillColor(243, 232, 255);
       pdf.roundedRect(barX, y + 1, barWidth, 5, 2, 2, "F");
 
@@ -232,34 +250,34 @@ export const generatePDFReport = async ({
 
       pdf.setFontSize(8);
       pdf.setFont("helvetica", "bold");
-      pdf.text(`${percentage}%`, pageWidth - margin - 3, y + 5, { align: "right" });
+      pdf.text(`${count} kali`, pageWidth - margin - 3, y + 5, { align: "right" });
       y += 10;
     });
     y += 6;
   }
 
   // ── SECTION: RECENT NOTES ──
-  const recentNotes = moods.filter(m => m.note).slice(0, 3);
+  const recentNotes = symptoms.filter(s => s.note && s.note.trim() !== "").slice(0, 3);
   if (recentNotes.length > 0) {
     checkPageBreak(25);
     drawIcon(margin + 3, y + 2, 196, 181, 253);
     pdf.setFontSize(11);
     pdf.setFont("helvetica", "bold");
     pdf.setTextColor(107, 33, 168);
-    pdf.text("Catatan Jurnal Terbaru", margin + 9, y + 4);
+    pdf.text("Catatan Keluhan Terbaru", margin + 9, y + 4);
     y += 12;
 
-    recentNotes.forEach((m) => {
+    recentNotes.forEach((s) => {
       checkPageBreak(16);
       pdf.setFillColor(250, 248, 246);
       pdf.roundedRect(margin, y, contentWidth, 14, 3, 3, "F");
       pdf.setFontSize(8);
       pdf.setFont("helvetica", "bold");
       pdf.setTextColor(140, 130, 150);
-      pdf.text(`${m.mood_type}  --  ${dayjs(m.date).format("DD MMM YYYY")}`, margin + 5, y + 5);
+      pdf.text(`Keluhan Tambahan  --  ${dayjs(s.date).format("DD MMM YYYY")}`, margin + 5, y + 5);
       pdf.setFont("helvetica", "italic");
       pdf.setTextColor(100, 90, 110);
-      const noteText = pdf.splitTextToSize(`"${m.note}"`, contentWidth - 12);
+      const noteText = pdf.splitTextToSize(`"${s.note}"`, contentWidth - 12);
       pdf.text(noteText[0], margin + 5, y + 11);
       y += 16;
     });

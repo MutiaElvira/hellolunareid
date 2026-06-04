@@ -6,7 +6,6 @@ import {
   FaFilePdf,
   FaSignOutAlt,
   FaBookOpen,
-  FaCommentDots,
 } from "react-icons/fa";
 import { useAuth } from "../../context/AuthContext";
 
@@ -32,9 +31,8 @@ function Sidebar({ activeSection, setActiveSection }) {
             {[
               { id: "dashboard", icon: <FaCalendarAlt />, label: "Dashboard" },
               { id: "tracker", icon: <FaHeart />, label: "Cycle Tracker" },
-              { id: "mood", icon: <FaSmile />, label: "Mood Journal" },
+              { id: "symptoms", icon: <FaSmile />, label: "Jurnal Harian" },
               { id: "education", icon: <FaBookOpen />, label: "Edukasi" },
-              { id: "messages", icon: <FaCommentDots />, label: "Pesan Privat" },
               { id: "report", icon: <FaFilePdf />, label: "Laporan Kesehatan" },
               { id: "profile", icon: <FaSmile />, label: "My Profile" },
             ].map((item) => (
@@ -64,13 +62,12 @@ function Sidebar({ activeSection, setActiveSection }) {
       </div>
 
       {/* MOBILE NAV (Rendered inside the main container in Dashboard usually, but can be extracted here for layout) */}
-      <div className="flex lg:hidden gap-2 mb-6 overflow-x-auto pb-2">
+      <div className="flex lg:hidden gap-2 px-4 pt-4 pb-3 overflow-x-auto bg-white border-b border-pink-100/50">
         {[
           { key: "dashboard", icon: <FaCalendarAlt />, label: "Dashboard" },
           { key: "tracker", icon: <FaHeart />, label: "Tracker" },
-          { key: "mood", icon: <FaSmile />, label: "Mood" },
+          { key: "symptoms", icon: <FaSmile />, label: "Jurnal" },
           { key: "education", icon: <FaBookOpen />, label: "Edukasi" },
-          { key: "messages", icon: <FaCommentDots />, label: "Pesan" },
           { key: "report", icon: <FaFilePdf />, label: "Laporan" },
           { key: "profile", icon: <FaSmile />, label: "Profile" },
         ].map((item) => (

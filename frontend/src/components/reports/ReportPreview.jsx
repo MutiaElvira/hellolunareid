@@ -1,9 +1,9 @@
 import dayjs from "dayjs";
-import { formatReportDateTime, calculateMoodDistribution, getRecentNotes, getHealthTips } from "../../utils/reportFormatter";
+import { formatReportDateTime, calculateSymptomDistribution, getRecentNotes, getHealthTips, SYMPTOM_LABELS } from "../../utils/reportFormatter";
 
-function ReportPreview({ profile, periods, moods, prediction, avgCycleLength, getMoodEmoji }) {
-  const { moodCounts, totalMoodsCount } = calculateMoodDistribution(moods);
-  const recentNotes = getRecentNotes(moods, 3);
+function ReportPreview({ profile, periods, symptoms, prediction, avgCycleLength }) {
+  const { symptomCounts, totalLogs } = calculateSymptomDistribution(symptoms);
+  const recentNotes = getRecentNotes(symptoms, 3);
   const healthTips = getHealthTips(prediction);
 
   return (
@@ -96,26 +96,24 @@ function ReportPreview({ profile, periods, moods, prediction, avgCycleLength, ge
           </div>
         )}
 
-        {/* Moods Section */}
+        {/* Symptoms Section */}
         <h3 className="text-xl font-bold mb-4 text-[#3B2F4A] flex items-center gap-2 border-b border-pink-100 pb-2">
-          <span>🧠</span> Analisis Jurnal Suasana Hati
+          <span>🧠</span> Ringkasan Gejala Harian
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          {/* Mood count */}
+          {/* Symptom distribution */}
           <div className="pdf-stat-card">
-            <h4 className="font-bold text-sm text-purple-700 mb-3">Distribusi Suasana Hati</h4>
-            {totalMoodsCount === 0 ? (
-              <p className="text-gray-400 text-xs italic">Belum ada jurnal suasana hati.</p>
+            <h4 className="font-bold text-sm text-purple-700 mb-3">Frekuensi Gejala Terdeteksi</h4>
+            {totalLogs === 0 ? (
+              <p className="text-gray-400 text-xs italic">Belum ada catatan gejala harian.</p>
             ) : (
-              <div className="space-y-2">
-                {Object.entries(moodCounts).map(([type, count]) => {
-                  const percentage = Math.round((count / totalMoodsCount) * 100);
+              <div className="space-y-2.5">
+                {Object.entries(symptomCounts).map(([key, count]) => {
+                  const percentage = Math.round((count / symptoms.length) * 100);
+                  const label = SYMPTOM_LABELS[key] || key;
                   return (
-                    <div key={type} className="flex items-center justify-between text-xs">
-                      <span className="capitalize flex items-center gap-1.5 font-medium">
-                        <span>{getMoodEmoji(type)}</span>
-                        <span>{type}</span>
-                      </span>
+                    <div key={key} className="flex items-center justify-between text-xs">
+                      <span className="font-semibold text-gray-700">{label}</span>
                       <div className="flex items-center gap-2 w-1/2">
                         <div className="bg-pink-100 h-2.5 rounded-full flex-1 overflow-hidden">
                           <div
@@ -123,7 +121,7 @@ function ReportPreview({ profile, periods, moods, prediction, avgCycleLength, ge
                             style={{ width: `${percentage}%` }}
                           ></div>
                         </div>
-                        <span className="font-bold text-gray-500 w-8 text-right">{percentage}%</span>
+                        <span className="font-bold text-gray-500 w-12 text-right">{count} kali</span>
                       </div>
                     </div>
                   );
@@ -132,23 +130,20 @@ function ReportPreview({ profile, periods, moods, prediction, avgCycleLength, ge
             )}
           </div>
 
-          {/* Mood notes */}
+          {/* Symptom notes */}
           <div className="pdf-stat-card">
-            <h4 className="font-bold text-sm text-purple-700 mb-3">Catatan Jurnal Terbaru</h4>
+            <h4 className="font-bold text-sm text-purple-700 mb-3">Catatan Keluhan Terbaru</h4>
             {recentNotes.length === 0 ? (
-              <p className="text-gray-400 text-xs italic">Tidak ada catatan suasana hati terbaru.</p>
+              <p className="text-gray-400 text-xs italic">Tidak ada catatan keluhan terbaru.</p>
             ) : (
               <div className="space-y-2.5">
-                {recentNotes.map((m) => (
-                  <div key={m.id} className="text-xs bg-white p-2.5 rounded-xl border border-pink-50 shadow-sm">
-                    <div className="flex justify-between text-gray-400 mb-1">
-                      <span className="font-bold flex items-center gap-1">
-                        <span>{getMoodEmoji(m.mood_type)}</span>
-                        <span className="capitalize">{m.mood_type}</span>
-                      </span>
-                      <span>{dayjs(m.date).format("DD MMM YYYY")}</span>
+                {recentNotes.map((s) => (
+                  <div key={s.id} className="text-xs bg-white p-2.5 rounded-xl border border-pink-50 shadow-sm">
+                    <div className="flex justify-between text-gray-400 mb-1 font-semibold">
+                      <span>Keluhan Tambahan</span>
+                      <span>{dayjs(s.date).format("DD MMM YYYY")}</span>
                     </div>
-                    <p className="text-gray-600 italic">"{m.note}"</p>
+                    <p className="text-gray-600 italic">"{s.note}"</p>
                   </div>
                 ))}
               </div>

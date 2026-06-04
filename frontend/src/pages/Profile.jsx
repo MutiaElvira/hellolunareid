@@ -3,7 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import * as authService from "../services/authService";
 import { API_BASE_URL } from "../services/api";
 import usePeriods from "../hooks/usePeriods";
-import useMoods from "../hooks/useMoods";
+import useSymptoms from "../hooks/useSymptoms";
 import { FaCamera, FaSave, FaHeart, FaCalendarAlt, FaSmile, FaUser } from "react-icons/fa";
 import dayjs from "dayjs";
 import AlertModal from "../components/common/AlertModal";
@@ -16,7 +16,7 @@ const calculateAge = (birthDate) => {
 function Profile() {
   const { user, refreshProfile } = useAuth();
   const { periods, prediction, avgCycleLength, nextPeriodDate } = usePeriods();
-  const { moods } = useMoods();
+  const { symptoms } = useSymptoms();
   
   const fileInputRef = useRef(null);
 
@@ -207,8 +207,8 @@ function Profile() {
                 <span className="font-bold text-lg text-pink-500">{periods.length}</span>
               </div>
               <div className="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm">
-                <span className="text-gray-500 text-sm font-medium">Mood Entries</span>
-                <span className="font-bold text-lg text-purple-500">{moods.length}</span>
+                <span className="text-gray-500 text-sm font-medium">Symptom Logs</span>
+                <span className="font-bold text-lg text-purple-500">{symptoms.length}</span>
               </div>
               <div className="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm">
                 <span className="text-gray-500 text-sm font-medium">Avg Cycle</span>
