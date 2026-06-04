@@ -131,7 +131,7 @@ function Profile() {
   
   // Construct absolute image URL
   const profileImageUrl = user.profile_picture 
-    ? (user.profile_picture.startsWith("http") ? user.profile_picture : `${API_BASE_URL}${user.profile_picture}`)
+    ? (user.profile_picture.startsWith("http") || user.profile_picture.startsWith("data:image/") ? user.profile_picture : `${API_BASE_URL}${user.profile_picture}`)
     : null;
 
   return (

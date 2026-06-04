@@ -15,7 +15,7 @@ class User(Base):
     birth_date = Column(Date, nullable=True)
     height = Column(Float, nullable=True)
     weight = Column(Float, nullable=True)
-    profile_picture = Column(String(255), nullable=True)
+    profile_picture = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     periods = relationship("Period", back_populates="user")

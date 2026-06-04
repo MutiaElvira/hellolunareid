@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlalchemy.orm import Session
 import os
 import uuid
+import base64
 
 from database import SessionLocal
 import models
@@ -162,19 +163,33 @@ async def upload_photo(
     if ext not in allowed_extensions:
         raise HTTPException(status_code=400, detail="Only JPG, JPEG, and PNG files are allowed")
 
-    # Generate unique filename
-    unique_filename = f"{uuid.uuid4()}{ext}"
-    file_path = os.path.join("uploads", "profile_pictures", unique_filename)
-
-    # Save file
+    # Convert to Base64
     try:
-        with open(file_path, "wb") as buffer:
-            buffer.write(await file.read())
+        contents = await file.read()
+        
+        # Max file size 1MB (1,048,576 bytes)
+        if len(contents) > 1 * 1024 * 1024:
+            raise HTTPException(status_code=400, detail="File size exceeds 1MB limit")
+            
+        encoded = base64.b64encode(contents).decode("utf-8")
+        content_type = file.content_type or "image/png"
+        
+        if not content_type.startswith("image/"):
+            if ext == ".png":
+                content_type = "image/png"
+            elif ext in [".jpg", ".jpeg"]:
+                content_type = "image/jpeg"
+            else:
+                content_type = "image/png"
+                
+        base64_data_url = f"data:{content_type};base64,{encoded}"
+    except HTTPException as he:
+        raise he
     except Exception as e:
-        raise HTTPException(status_code=500, detail="Could not save file")
+        raise HTTPException(status_code=500, detail="Could not process file")
 
     # Update DB
-    db_user.profile_picture = f"/uploads/profile_pictures/{unique_filename}"
+    db_user.profile_picture = base64_data_url
     db.commit()
     db.refresh(db_user)
 
@@ -193,14 +208,6 @@ def delete_photo(
     db_user = db.query(models.User).filter(models.User.id == user_id).first()
     if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
-
-    if db_user.profile_picture:
-        relative_path = db_user.profile_picture.lstrip("/")
-        if os.path.exists(relative_path):
-            try:
-                os.remove(relative_path)
-            except Exception as e:
-                print(f"Error removing file {relative_path}: {e}")
 
     db_user.profile_picture = None
     db.commit()
