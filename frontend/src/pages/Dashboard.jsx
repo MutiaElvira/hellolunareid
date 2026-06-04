@@ -40,6 +40,7 @@ function Dashboard() {
   const todaySymptom = symptoms.find((s) => s.date === today);
 
   const [activeSection, setActiveSection] = useState("dashboard");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const [alertModal, setAlertModal] = useState({
     isOpen: false,
@@ -130,11 +131,37 @@ function Dashboard() {
   };
 
   return (
-    <div className="h-screen w-screen bg-[#FAF8F6] flex overflow-hidden">
-      <Sidebar activeSection={activeSection} setActiveSection={setActiveSection} />
+    <div className="h-screen w-screen bg-[#FAF8F6] flex overflow-hidden relative">
+      <Sidebar
+        activeSection={activeSection}
+        setActiveSection={setActiveSection}
+        isOpen={isSidebarOpen}
+        setIsOpen={setIsSidebarOpen}
+      />
       
-      <div className="flex-1 overflow-y-auto p-6 md:p-10">
-        <div className="max-w-6xl mx-auto w-full">
+      {/* Mobile Sidebar Overlay Backdrop */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/35 z-40 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+      
+      <div className="flex-1 overflow-y-auto p-6 md:p-10 flex flex-col">
+        {/* Hamburger Menu Toggle Button (Visible only on mobile) */}
+        <div className="lg:hidden mb-6 flex items-center">
+          <button
+            onClick={() => setIsSidebarOpen(true)}
+            className="p-2.5 bg-white border border-pink-100/50 rounded-xl text-pink-500 hover:bg-pink-50 shadow-3xs"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          <span className="ml-3 font-extrabold text-[#3B2F4A] text-xs tracking-wider uppercase">Menu</span>
+        </div>
+
+        <div className="max-w-6xl mx-auto w-full flex-1">
           {renderActiveSection()}
         </div>
       </div>
