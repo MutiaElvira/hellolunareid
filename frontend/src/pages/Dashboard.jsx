@@ -130,10 +130,10 @@ function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen h-screen w-screen bg-[#FAF8F6] flex flex-col lg:flex-row overflow-hidden">
+    <div className="h-screen w-screen bg-[#FAF8F6] flex overflow-hidden">
       <Sidebar activeSection={activeSection} setActiveSection={setActiveSection} />
       
-      <div className="flex-1 overflow-y-auto p-4 md:p-10">
+      <div className="flex-1 overflow-y-auto p-6 md:p-10">
         <div className="max-w-6xl mx-auto w-full">
           {renderActiveSection()}
         </div>
