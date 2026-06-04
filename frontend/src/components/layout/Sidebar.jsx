@@ -19,7 +19,7 @@ function Sidebar({ activeSection, setActiveSection, isOpen, setIsOpen }) {
 
   return (
     <div
-      className={`fixed inset-y-0 left-0 lg:static z-50 flex w-72 bg-gradient-to-b from-pink-200 to-purple-200 p-8 flex-col justify-between h-full transform transition-transform duration-300 lg:transform-none ${
+      className={`fixed inset-y-0 left-0 lg:static z-50 flex w-72 bg-gradient-to-b from-pink-200 to-purple-200 p-8 flex-col justify-between h-full transition-transform duration-300 lg:translate-x-0 ${
         isOpen ? "translate-x-0" : "-translate-x-full"
       }`}
     >
