@@ -1,0 +1,216 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+@import "tailwindcss";
+
+*{
+  font-family: 'Poppins', sans-serif;
+}
+
+body{
+  background-color: #F8F5F2;
+  color: #3B2F4A;
+}
+
+/* ===== REACT CALENDAR BASE ===== */
+
+.react-calendar {
+  width: 100% !important;
+  border: none !important;
+  font-family: inherit;
+  background: transparent !important;
+}
+
+.react-calendar__navigation {
+  margin-bottom: 20px;
+}
+
+.react-calendar__navigation button {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  color: #B57EDC;
+  font-weight: bold;
+}
+
+.react-calendar__navigation button:hover {
+  background: #fce7f3 !important;
+  border-radius: 12px;
+}
+
+.react-calendar__tile {
+  border-radius: 16px;
+  padding: 14px 0;
+  transition: all 0.2s ease;
+  position: relative;
+  font-weight: 500;
+}
+
+.react-calendar__tile:hover {
+  background: #F8D7E8 !important;
+}
+
+.react-calendar__tile--active {
+  background: #E8B4D3 !important;
+  color: white !important;
+}
+
+.react-calendar__month-view__days__day--weekend {
+  color: #d66ba0;
+}
+
+.react-calendar__tile--now {
+  background: #fce7f3 !important;
+  color: #B57EDC !important;
+  font-weight: bold;
+}
+
+/* ===== PERIOD DAY HIGHLIGHT ===== */
+
+.period-day {
+  background: #f9a8d4 !important;
+  color: white !important;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(249, 168, 212, 0.4);
+}
+
+.period-day:hover {
+  background: #f472b6 !important;
+}
+
+/* ===== FERTILE WINDOW HIGHLIGHT ===== */
+
+.fertile-day {
+  background: #bbf7d0 !important;
+  color: #166534 !important;
+  font-weight: 600;
+}
+
+.fertile-day:hover {
+  background: #86efac !important;
+}
+
+/* ===== OVULATION DAY HIGHLIGHT ===== */
+
+.ovulation-day {
+  background: #93c5fd !important;
+  color: white !important;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(147, 197, 253, 0.5);
+}
+
+.ovulation-day:hover {
+  background: #60a5fa !important;
+}
+
+/* ===== PREDICTED PERIOD HIGHLIGHT ===== */
+
+.predicted-day {
+  background: #ede9fe !important;
+  color: #7c3aed !important;
+  border: 2px dashed #c4b5fd !important;
+  font-weight: 600;
+}
+
+.predicted-day:hover {
+  background: #ddd6fe !important;
+}
+
+/* ===== COMBINED STATES ===== */
+
+.period-day.react-calendar__tile--now {
+  background: #ec4899 !important;
+  color: white !important;
+}
+
+.fertile-day.react-calendar__tile--now {
+  background: #4ade80 !important;
+  color: white !important;
+}
+
+/* ===== SPINNER ===== */
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* ===== SCROLLBAR STYLING ===== */
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #E8B4D3;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #B57EDC;
+}
+
+/* ===== PDF REPORT STYLING ===== */
+.pdf-container {
+  font-family: 'Poppins', sans-serif;
+  color: #2D2536;
+  background-color: #FFFFFF;
+}
+
+.pdf-header-gradient {
+  background: linear-gradient(135deg, #FDF2F8 0%, #F5F3FF 100%);
+  border-bottom: 2px solid #F3E8FF;
+}
+
+.pdf-section-title {
+  border-bottom: 2px solid #F3E8FF;
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+  color: #6B21A8;
+}
+
+.pdf-stat-card {
+  background: #FAF8F6;
+  border: 1px solid #F3E8FF;
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.pdf-table-header {
+  background-color: #FDF2F8;
+  color: #B57EDC;
+  font-weight: 600;
+  text-align: left;
+  padding: 12px;
+  border-bottom: 2px solid #F3E8FF;
+}
+
+.pdf-table-row {
+  border-bottom: 1px solid #FAF8F6;
+  padding: 12px;
+}
+
+.pdf-table-row:nth-child(even) {
+  background-color: #FAF8F6;
+}
+
+/* ===== CUSTOM ALERT MODAL ANIMATION ===== */
+
+@keyframes alertSlideIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
