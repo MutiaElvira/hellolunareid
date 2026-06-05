@@ -80,20 +80,22 @@ export const generatePDFReport = async ({
   pdf.setFillColor(252, 231, 243);
   pdf.roundedRect(margin, y, contentWidth, 38, 8, 8, "F");
 
-  // Decorative moon circle
-  drawIcon(margin + 16, y + 18, 181, 126, 220, 6);
-  pdf.setFont("helvetica", "bold");
-  pdf.setFontSize(14);
-  pdf.setTextColor(255, 255, 255);
-  pdf.text("L", margin + 14, y + 19);
+  // Decorative moon logo
+  pdf.setFillColor(255, 255, 255);
+  pdf.roundedRect(margin + 8, y + 8, 28, 28, 8, 8, "F");
+  pdf.setFillColor(181, 126, 220);
+  pdf.circle(margin + 22, y + 22, 10, "F");
+  pdf.setFillColor(252, 231, 243);
+  pdf.circle(margin + 25, y + 19, 6, "F");
 
+  pdf.setFont("helvetica", "bold");
   pdf.setFontSize(22);
   pdf.setTextColor(59, 47, 74);
-  pdf.text("Lunare", margin + 28, y + 20);
+  pdf.text("Lunare", margin + 42, y + 20);
   pdf.setFontSize(9);
   pdf.setFont("helvetica", "normal");
   pdf.setTextColor(113, 74, 217);
-  pdf.text("Wellness & Cycle Companion", margin + 28, y + 27);
+  pdf.text("Wellness & Cycle Companion", margin + 42, y + 27);
 
   pdf.setFontSize(11);
   pdf.setFont("helvetica", "bold");

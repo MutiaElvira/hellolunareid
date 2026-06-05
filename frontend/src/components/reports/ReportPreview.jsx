@@ -11,9 +11,9 @@ function ReportPreview({ profile, periods, symptoms, prediction, avgCycleLength 
       <div id="pdf-report-content" className="pdf-container p-6 rounded-2xl">
         {/* Header */}
         <div className="pdf-header-gradient p-8 rounded-2xl mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div className="flex items-center gap-3">
-            <div className="bg-white p-3 rounded-full shadow-sm">
-              <span className="text-pink-400 text-3xl">🌙</span>
+          <div className="flex items-center gap-4">
+            <div className="pdf-logo-wrapper">
+              <img src="/moon-logo.svg" alt="Logo Lunare" className="pdf-logo" />
             </div>
             <div>
               <h2 className="text-2xl font-bold text-[#3B2F4A]">Lunare</h2>

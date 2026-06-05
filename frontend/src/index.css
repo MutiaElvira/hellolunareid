@@ -170,6 +170,22 @@ body{
   border-bottom: 2px solid #F3E8FF;
 }
 
+.pdf-logo-wrapper {
+  width: 58px;
+  height: 58px;
+  background: white;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 30px rgba(124, 58, 237, 0.12);
+}
+
+.pdf-logo {
+  width: 36px;
+  height: 36px;
+}
+
 .pdf-section-title {
   border-bottom: 2px solid #F3E8FF;
   padding-bottom: 8px;
