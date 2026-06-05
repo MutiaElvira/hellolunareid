@@ -3,6 +3,25 @@ import html2canvas from "html2canvas";
 import dayjs from "dayjs";
 import { getHealthTips } from "../utils/reportFormatter";
 
+const waitForImagesToLoad = async (element) => {
+  const images = Array.from(element.querySelectorAll("img"));
+  await Promise.all(
+    images.map((img) =>
+      img.complete
+        ? Promise.resolve()
+        : new Promise((resolve) => {
+            const onFinish = () => {
+              img.removeEventListener("load", onFinish);
+              img.removeEventListener("error", onFinish);
+              resolve();
+            };
+            img.addEventListener("load", onFinish);
+            img.addEventListener("error", onFinish);
+          })
+    )
+  );
+};
+
 export const generatePDFReport = async ({
   profile,
   periods,
@@ -18,33 +37,38 @@ export const generatePDFReport = async ({
     throw new Error("Tidak dapat menemukan elemen laporan untuk diunduh.");
   }
 
-  const originalWidth = reportElement.style.width;
+  await waitForImagesToLoad(reportElement);
+  await new Promise((resolve) => setTimeout(resolve, 250));
+
+  const originalWidth = reportElement.style.width || "";
+  const originalHeight = reportElement.style.height || "";
   reportElement.style.width = "900px";
+  reportElement.style.minHeight = "auto";
 
   const canvas = await html2canvas(reportElement, {
     scale: 2,
     useCORS: true,
     backgroundColor: "#ffffff",
     allowTaint: false,
-    imageTimeout: 15000,
+    imageTimeout: 30000,
+    scrollX: -window.scrollX,
+    scrollY: -window.scrollY,
   });
 
   reportElement.style.width = originalWidth;
+  reportElement.style.height = originalHeight;
 
   const imgData = canvas.toDataURL("image/png");
   const pdf = new jsPDF("p", "mm", "a4");
   const pdfWidth = pdf.internal.pageSize.getWidth();
   const pdfHeight = pdf.internal.pageSize.getHeight();
-  const imgProps = { width: canvas.width, height: canvas.height };
   const imgWidth = pdfWidth;
-  const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
+  const imgHeight = (canvas.height * pdfWidth) / canvas.width;
 
-  let heightLeft = imgHeight;
   let position = 0;
-
   pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-  heightLeft -= pdfHeight;
 
+  let heightLeft = imgHeight - pdfHeight;
   while (heightLeft > -0.1) {
     position -= pdfHeight;
     pdf.addPage();
@@ -58,7 +82,9 @@ export const generatePDFReport = async ({
     pdf.setFontSize(7);
     pdf.setFont("helvetica", "normal");
     pdf.setTextColor(180, 175, 190);
-    pdf.text(`Lunare  --  Halaman ${i} dari ${totalPages}`, pdfWidth / 2, pdfHeight - 10, { align: "center" });
+    pdf.text(`Lunare  --  Halaman ${i} dari ${totalPages}`, pdfWidth / 2, pdfHeight - 10, {
+      align: "center",
+    });
   }
 
   pdf.save(`Laporan_Kesehatan_Lunare_${dayjs().format("YYYY-MM-DD")}.pdf`);
