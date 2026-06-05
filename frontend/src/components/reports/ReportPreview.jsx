@@ -1,7 +1,14 @@
 import dayjs from "dayjs";
+import { API_BASE_URL } from "../../services/api";
 import { formatReportDateTime, calculateSymptomDistribution, getRecentNotes, getHealthTips, SYMPTOM_LABELS } from "../../utils/reportFormatter";
 
 function ReportPreview({ profile, periods, symptoms, prediction, avgCycleLength }) {
+  const profileImageUrl = profile?.profile_picture
+    ? profile.profile_picture.startsWith("http") || profile.profile_picture.startsWith("data:image/")
+      ? profile.profile_picture
+      : `${API_BASE_URL}${profile.profile_picture}`
+    : null;
+
   const { symptomCounts, totalLogs } = calculateSymptomDistribution(symptoms);
   const recentNotes = getRecentNotes(symptoms, 3);
   const healthTips = getHealthTips(prediction);
@@ -28,10 +35,26 @@ function ReportPreview({ profile, periods, symptoms, prediction, avgCycleLength 
 
         {/* Profile info */}
         {profile && (
-          <div className="mb-8 bg-pink-50/50 p-6 rounded-2xl border border-pink-100 flex flex-col md:flex-row md:justify-between gap-4">
-            <div>
-              <p className="text-xs text-gray-400 uppercase font-bold tracking-wider">Nama Pengguna</p>
-              <p className="text-lg font-bold text-gray-700">{profile.username}</p>
+          <div className="mb-8 bg-pink-50/50 p-6 rounded-2xl border border-pink-100 flex flex-col md:flex-row md:justify-between gap-4 items-center">
+            <div className="flex items-center gap-4">
+              <div className="pdf-profile-avatar-wrapper">
+                {profileImageUrl ? (
+                  <img
+                    src={profileImageUrl}
+                    alt="Profile"
+                    className="pdf-profile-avatar"
+                    crossOrigin="anonymous"
+                  />
+                ) : (
+                  <div className="pdf-profile-avatar pdf-profile-avatar-fallback">
+                    {profile.username?.charAt(0).toUpperCase() || "U"}
+                  </div>
+                )}
+              </div>
+              <div>
+                <p className="text-xs text-gray-400 uppercase font-bold tracking-wider">Nama Pengguna</p>
+                <p className="text-lg font-bold text-gray-700">{profile.username}</p>
+              </div>
             </div>
             <div>
               <p className="text-xs text-gray-400 uppercase font-bold tracking-wider">Email</p>

@@ -186,6 +186,35 @@ body{
   height: 36px;
 }
 
+.pdf-profile-avatar-wrapper {
+  width: 72px;
+  height: 72px;
+  min-width: 72px;
+  min-height: 72px;
+  border-radius: 24px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f8efff 0%, #f6f0ff 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e9d5ff;
+}
+
+.pdf-profile-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pdf-profile-avatar-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7c3aed;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
 .pdf-section-title {
   border-bottom: 2px solid #F3E8FF;
   padding-bottom: 8px;
