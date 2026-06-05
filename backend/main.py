@@ -12,14 +12,15 @@ import models
 os.makedirs("uploads/profile_pictures", exist_ok=True)
 
 app = FastAPI()
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 models.Base.metadata.create_all(bind=engine)
 
