@@ -22,24 +22,7 @@ const waitForImagesToLoad = async (element) => {
   );
 };
 
-export const generatePDFReport = async ({
-  profile,
-  periods,
-  symptoms,
-  prediction,
-  avgCycleLength,
-  avgDuration,
-  nextPeriodDate,
-  futurePredictions,
-}) => {
-  const reportElement = document.getElementById("pdf-report-content");
-  if (!reportElement) {
-    throw new Error("Tidak dapat menemukan elemen laporan untuk diunduh.");
-  }
-
-  await waitForImagesToLoad(reportElement);
-  await new Promise((resolve) => setTimeout(resolve, 250));
-
+const captureReportAsPDF = async (reportElement) => {
   const originalWidth = reportElement.style.width || "";
   const originalHeight = reportElement.style.height || "";
   reportElement.style.width = "900px";
@@ -88,4 +71,39 @@ export const generatePDFReport = async ({
   }
 
   pdf.save(`Laporan_Kesehatan_Lunare_${dayjs().format("YYYY-MM-DD")}.pdf`);
+};
+
+export const generatePDFReport = async ({
+  profile,
+  periods,
+  symptoms,
+  prediction,
+  avgCycleLength,
+  avgDuration,
+  nextPeriodDate,
+  futurePredictions,
+}) => {
+  const reportElement = document.getElementById("pdf-report-content");
+  if (!reportElement) {
+    throw new Error("Tidak dapat menemukan elemen laporan untuk diunduh.");
+  }
+
+  await waitForImagesToLoad(reportElement);
+  await new Promise((resolve) => setTimeout(resolve, 250));
+
+  try {
+    await captureReportAsPDF(reportElement);
+  } catch (firstError) {
+    const profileImage = reportElement.querySelector("img.pdf-profile-avatar");
+    if (profileImage) {
+      profileImage.style.display = "none";
+      try {
+        await captureReportAsPDF(reportElement);
+      } finally {
+        profileImage.style.display = "";
+      }
+    } else {
+      throw firstError;
+    }
+  }
 };

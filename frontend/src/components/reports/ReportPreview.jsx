@@ -43,7 +43,6 @@ function ReportPreview({ profile, periods, symptoms, prediction, avgCycleLength 
                     src={profileImageUrl}
                     alt="Profile"
                     className="pdf-profile-avatar"
-                    crossOrigin="anonymous"
                   />
                 ) : (
                   <div className="pdf-profile-avatar pdf-profile-avatar-fallback">
