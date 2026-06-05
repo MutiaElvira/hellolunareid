@@ -54,6 +54,15 @@ export const generatePDFReport = async ({
   const contentWidth = pageWidth - margin * 2;
   let y = margin;
 
+  const totalSymptomLogs = symptoms.reduce((sum, s) => {
+    return sum + Object.keys(SYMPTOM_LABELS).reduce((count, key) => {
+      return count + (s[key] && s[key] !== "" ? 1 : 0);
+    }, 0);
+  }, 0);
+
+  const safeNextPeriodDate = nextPeriodDate || (prediction?.has_data ? dayjs(prediction.next_period_date).format("DD MMM YYYY") : "Belum Tersedia");
+  const safeAverageDuration = prediction?.has_data ? prediction.avg_period_duration : avgDuration || "-";
+
   const checkPageBreak = (needed) => {
     if (y + needed > pageHeight - margin) {
       pdf.addPage();
@@ -68,33 +77,90 @@ export const generatePDFReport = async ({
   };
 
   // ── HEADER ──
-  pdf.setFillColor(253, 242, 248);
-  pdf.roundedRect(margin, y, contentWidth, 30, 4, 4, "F");
+  pdf.setFillColor(252, 231, 243);
+  pdf.roundedRect(margin, y, contentWidth, 38, 8, 8, "F");
 
   // Decorative moon circle
-  drawIcon(margin + 14, y + 12, 181, 126, 220, 5);
+  drawIcon(margin + 16, y + 18, 181, 126, 220, 6);
   pdf.setFont("helvetica", "bold");
-  pdf.setFontSize(11);
+  pdf.setFontSize(14);
   pdf.setTextColor(255, 255, 255);
-  pdf.text("L", margin + 12, y + 14);
+  pdf.text("L", margin + 14, y + 19);
 
-  pdf.setFontSize(20);
+  pdf.setFontSize(22);
   pdf.setTextColor(59, 47, 74);
-  pdf.text("Lunare", margin + 24, y + 13);
+  pdf.text("Lunare", margin + 28, y + 20);
   pdf.setFontSize(9);
   pdf.setFont("helvetica", "normal");
-  pdf.setTextColor(120, 100, 140);
-  pdf.text("Wellness & Cycle Companion", margin + 24, y + 20);
+  pdf.setTextColor(113, 74, 217);
+  pdf.text("Wellness & Cycle Companion", margin + 28, y + 27);
 
-  pdf.setFontSize(10);
+  pdf.setFontSize(11);
   pdf.setFont("helvetica", "bold");
   pdf.setTextColor(107, 33, 168);
-  pdf.text("Laporan Siklus Kesehatan", pageWidth - margin - 8, y + 12, { align: "right" });
+  pdf.text("Laporan Siklus Kesehatan", pageWidth - margin - 8, y + 14, { align: "right" });
   pdf.setFont("helvetica", "normal");
   pdf.setFontSize(8);
-  pdf.setTextColor(140, 130, 150);
-  pdf.text(`Dicetak: ${dayjs().format("DD MMMM YYYY, HH:mm")}`, pageWidth - margin - 8, y + 19, { align: "right" });
-  y += 38;
+  pdf.setTextColor(99, 73, 136);
+  pdf.text(`Dicetak: ${dayjs().format("DD MMMM YYYY, HH:mm")}`, pageWidth - margin - 8, y + 22, { align: "right" });
+  y += 46;
+
+  // ── SUMMARY BOX ──
+  checkPageBreak(28);
+  pdf.setFillColor(249, 237, 255);
+  pdf.roundedRect(margin, y, contentWidth, 26, 6, 6, "F");
+  pdf.setFont("helvetica", "bold");
+  pdf.setFontSize(9);
+  pdf.setTextColor(99, 39, 175);
+  pdf.text("Ringkasan Singkat:", margin + 6, y + 9);
+  pdf.setFont("helvetica", "normal");
+  pdf.setFontSize(8);
+  pdf.setTextColor(102, 77, 141);
+  pdf.text(
+    `Laporan ini meninjau ${periods.length} siklus dan ${totalSymptomLogs} catatan gejala untuk membantu Anda memahami pola kesehatan menstruasi.`,
+    margin + 6,
+    y + 15,
+    { maxWidth: contentWidth - 12 }
+  );
+  y += 34;
+
+  // ── SECTION: RINGKASAN SIKLUS ──
+  checkPageBreak(38);
+  pdf.setDrawColor(243, 232, 255);
+  pdf.setLineWidth(0.5);
+  pdf.line(margin, y, pageWidth - margin, y);
+  y += 8;
+  drawIcon(margin + 3, y + 1, 244, 114, 182);
+  pdf.setFontSize(14);
+  pdf.setFont("helvetica", "bold");
+  pdf.setTextColor(59, 47, 74);
+  pdf.text("Ringkasan Siklus", margin + 9, y + 4);
+  y += 14;
+
+  const statBoxWidth = (contentWidth - 15) / 4;
+  const stats = [
+    { label: "Rata-rata Siklus", value: `${avgCycleLength} Hari` },
+    { label: "Durasi Menstruasi", value: `${safeAverageDuration} Hari` },
+    { label: "Prediksi Berikutnya", value: safeNextPeriodDate },
+    { label: "Catatan Gejala", value: `${totalSymptomLogs} entri` },
+  ];
+
+  stats.forEach((stat, i) => {
+    const x = margin + i * (statBoxWidth + 5);
+    pdf.setFillColor(250, 248, 246);
+    pdf.roundedRect(x, y, statBoxWidth, 24, 3, 3, "F");
+    pdf.setDrawColor(243, 232, 255);
+    pdf.roundedRect(x, y, statBoxWidth, 24, 3, 3, "S");
+    pdf.setFontSize(7);
+    pdf.setFont("helvetica", "bold");
+    pdf.setTextColor(140, 130, 150);
+    pdf.text(stat.label.toUpperCase(), x + 4, y + 8);
+    pdf.setFontSize(12);
+    pdf.setFont("helvetica", "bold");
+    pdf.setTextColor(59, 47, 74);
+    pdf.text(stat.value, x + 4, y + 18);
+  });
+  y += 32;
 
   // ── USER INFO ──
   if (profile) {
@@ -113,43 +179,6 @@ export const generatePDFReport = async ({
     pdf.text(profile.email || "-", margin + contentWidth / 2 + 6, y + 14);
     y += 26;
   }
-
-  // ── SECTION: RINGKASAN SIKLUS ──
-  checkPageBreak(40);
-  pdf.setDrawColor(243, 232, 255);
-  pdf.setLineWidth(0.5);
-  pdf.line(margin, y, pageWidth - margin, y);
-  y += 8;
-  drawIcon(margin + 3, y + 2, 244, 114, 182);
-  pdf.setFontSize(14);
-  pdf.setFont("helvetica", "bold");
-  pdf.setTextColor(59, 47, 74);
-  pdf.text("Ringkasan Siklus", margin + 9, y + 4);
-  y += 14;
-
-  const statBoxWidth = (contentWidth - 10) / 3;
-  const stats = [
-    { label: "Rata-rata Siklus", value: `${avgCycleLength} Hari` },
-    { label: "Rata-rata Menstruasi", value: `${prediction?.has_data ? prediction.avg_period_duration : avgDuration} Hari` },
-    { label: "Prediksi Berikutnya", value: nextPeriodDate },
-  ];
-
-  stats.forEach((stat, i) => {
-    const x = margin + i * (statBoxWidth + 5);
-    pdf.setFillColor(250, 248, 246);
-    pdf.roundedRect(x, y, statBoxWidth, 22, 3, 3, "F");
-    pdf.setDrawColor(243, 232, 255);
-    pdf.roundedRect(x, y, statBoxWidth, 22, 3, 3, "S");
-    pdf.setFontSize(7);
-    pdf.setFont("helvetica", "bold");
-    pdf.setTextColor(140, 130, 150);
-    pdf.text(stat.label.toUpperCase(), x + 5, y + 8);
-    pdf.setFontSize(13);
-    pdf.setFont("helvetica", "bold");
-    pdf.setTextColor(59, 47, 74);
-    pdf.text(stat.value, x + 5, y + 17);
-  });
-  y += 32;
 
   // ── SECTION: RIWAYAT SIKLUS ──
   checkPageBreak(30);
@@ -319,28 +348,26 @@ export const generatePDFReport = async ({
     pdf.text("Prediksi 1 Tahun (12 Siklus)", margin + 9, y + 4);
     y += 12;
 
-    pdf.setFillColor(253, 242, 248);
-    pdf.rect(margin, y, contentWidth, 10, "F");
+    pdf.setFillColor(245, 243, 255);
+    pdf.roundedRect(margin, y, contentWidth, 12, 3, 3, "F");
     pdf.setFontSize(8);
     pdf.setFont("helvetica", "bold");
-    pdf.setTextColor(181, 126, 220);
-    
-    // 3 columns for 12 months
+    pdf.setTextColor(124, 58, 237);
     const colW = contentWidth / 3;
-    pdf.text("Siklus 1 - 4", margin + 5, y + 7);
-    pdf.text("Siklus 5 - 8", margin + colW + 5, y + 7);
-    pdf.text("Siklus 9 - 12", margin + colW * 2 + 5, y + 7);
-    y += 10;
+    pdf.text("Siklus 1 - 4", margin + 5, y + 8);
+    pdf.text("Siklus 5 - 8", margin + colW + 5, y + 8);
+    pdf.text("Siklus 9 - 12", margin + colW * 2 + 5, y + 8);
+    y += 14;
 
     pdf.setFontSize(8);
     pdf.setFont("helvetica", "normal");
     pdf.setTextColor(80, 75, 90);
 
     for (let i = 0; i < 4; i++) {
-      checkPageBreak(8);
+      checkPageBreak(10);
       if (i % 2 === 1) {
         pdf.setFillColor(250, 248, 246);
-        pdf.rect(margin, y, contentWidth, 8, "F");
+        pdf.roundedRect(margin, y, contentWidth, 8, 2, 2, "F");
       }
       for (let j = 0; j < 3; j++) {
         const idx = j * 4 + i;
@@ -352,7 +379,7 @@ export const generatePDFReport = async ({
           pdf.text(d, margin + j * colW + 15, y + 5.5);
         }
       }
-      y += 8;
+      y += 10;
     }
     y += 8;
   }

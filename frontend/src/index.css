@@ -177,17 +177,50 @@ body{
   color: #6B21A8;
 }
 
+.pdf-highlight-card {
+  background: linear-gradient(135deg, #F8FAFC 0%, #FDF2F8 100%);
+  border: 1px solid #E9D5FF;
+  border-radius: 24px;
+  padding: 18px;
+  box-shadow: 0 16px 30px rgba(133, 77, 255, 0.08);
+}
+
+.pdf-infobox {
+  background: #FDF4FF;
+  border: 1px solid #E9D5FF;
+  border-radius: 20px;
+  padding: 18px;
+  color: #5B21B6;
+}
+
+.pdf-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #3B2F4A;
+  margin-top: 8px;
+}
+
+.pdf-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #7C3AED;
+  margin-bottom: 6px;
+  display: block;
+}
+
 .pdf-stat-card {
   background: #FAF8F6;
   border: 1px solid #F3E8FF;
   border-radius: 16px;
   padding: 16px;
+  min-height: 112px;
 }
 
 .pdf-table-header {
   background-color: #FDF2F8;
-  color: #B57EDC;
-  font-weight: 600;
+  color: #7C3AED;
+  font-weight: 700;
   text-align: left;
   padding: 12px;
   border-bottom: 2px solid #F3E8FF;
@@ -195,6 +228,9 @@ body{
 
 .pdf-table-row {
   border-bottom: 1px solid #FAF8F6;
+}
+
+.pdf-table-row td {
   padding: 12px;
 }
 

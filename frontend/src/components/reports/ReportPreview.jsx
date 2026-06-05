@@ -40,21 +40,50 @@ function ReportPreview({ profile, periods, symptoms, prediction, avgCycleLength 
           </div>
         )}
 
-        {/* Summary / Stats Grid */}
-        <h3 className="text-xl font-bold mb-4 text-[#3B2F4A] flex items-center gap-2 border-b border-pink-100 pb-2">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-5 mb-6">
+          <div className="pdf-highlight-card">
+            <span className="pdf-label">Rata-rata Siklus</span>
+            <p className="pdf-value">{avgCycleLength} Hari</p>
+            <p className="text-xs text-gray-500 mt-3">Memperlihatkan panjang rata-rata siklus menstruasi.</p>
+          </div>
+          <div className="pdf-highlight-card">
+            <span className="pdf-label">Rata-rata Menstruasi</span>
+            <p className="pdf-value">{prediction?.has_data ? prediction.avg_period_duration : 5} Hari</p>
+            <p className="text-xs text-gray-500 mt-3">Durasi rata-rata periode menstruasi.</p>
+          </div>
+          <div className="pdf-highlight-card">
+            <span className="pdf-label">Prediksi Berikutnya</span>
+            <p className="pdf-value">{prediction?.has_data ? dayjs(prediction.next_period_date).format("DD MMM YYYY") : "Belum Tersedia"}</p>
+            <p className="text-xs text-gray-500 mt-3">Tanggal menstruasi berikutnya berdasarkan data terakhir.</p>
+          </div>
+          <div className="pdf-highlight-card">
+            <span className="pdf-label">Total Catatan</span>
+            <p className="pdf-value">{totalLogs}</p>
+            <p className="text-xs text-gray-500 mt-3">Jumlah entri gejala harian yang tercatat.</p>
+          </div>
+        </div>
+
+        <div className="pdf-infobox mb-8">
+          <p className="font-semibold text-sm text-[#4C1D95] mb-2">Ringkasan Singkat</p>
+          <p className="text-xs text-[#5B21B6] leading-relaxed">
+            Laporan ini menampilkan informasi terpilih tentang siklus dan gejala kesehatan Anda, termasuk riwayat menstruasi, frekuensi gejala, serta prediksi siklus berikutnya.
+          </p>
+        </div>
+
+        <h3 className="pdf-section-title text-xl font-bold mb-4 text-[#3B2F4A] flex items-center gap-2">
           <span>📊</span> Ringkasan Siklus
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
           <div className="pdf-stat-card">
-            <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Rata-rata Siklus</p>
+            <p className="text-xs text-purple-700 font-bold uppercase tracking-wider mb-1">Rata-rata Siklus</p>
             <p className="text-2xl font-bold text-[#3B2F4A]">{avgCycleLength} Hari</p>
           </div>
           <div className="pdf-stat-card">
-            <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Rata-rata Menstruasi</p>
+            <p className="text-xs text-purple-700 font-bold uppercase tracking-wider mb-1">Rata-rata Menstruasi</p>
             <p className="text-2xl font-bold text-[#3B2F4A]">{prediction?.has_data ? prediction.avg_period_duration : 5} Hari</p>
           </div>
           <div className="pdf-stat-card">
-            <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Prediksi Berikutnya</p>
+            <p className="text-xs text-purple-700 font-bold uppercase tracking-wider mb-1">Prediksi Berikutnya</p>
             <p className="text-2xl font-bold text-[#3B2F4A]">
               {prediction?.has_data ? dayjs(prediction.next_period_date).format("DD MMM YYYY") : "No Data"}
             </p>
