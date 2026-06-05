@@ -1,8 +1,13 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import jwt
+import os
+from dotenv import load_dotenv
 
-SECRET_KEY = "lunare_secret_key"
+load_dotenv()
+
+SECRET_KEY = os.getenv("JWT_SECRET_KEY", "lunare_secret_key")
+
 ALGORITHM = "HS256"
 
 security = HTTPBearer()
