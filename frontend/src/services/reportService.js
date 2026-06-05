@@ -15,6 +15,28 @@ const SYMPTOM_LABELS = {
   depressed: "Sedih / Depresi 😢",
 };
 
+const SYMPTOM_LABELS_PDF = {
+  cramps: "Kram Perut",
+  headache: "Sakit Kepala",
+  bloating: "Kembung",
+  fatigue: "Kelelahan",
+  acne: "Jerawat",
+  breast_tenderness: "Nyeri Payudara",
+  insomnia: "Insomnia",
+  mood_swings: "Perubahan Mood",
+  anxiety: "Cemas",
+  depressed: "Sedih / Depresi",
+};
+
+const MOOD_LABELS_PDF = {
+  happy: "Senang",
+  sad: "Sedih",
+  angry: "Marah",
+  anxious: "Cemas",
+  tired: "Lelah",
+  neutral: "Biasa Saja",
+};
+
 export const generatePDFReport = async ({
   profile,
   periods,
@@ -185,7 +207,7 @@ export const generatePDFReport = async ({
         dayjs(p.start_date).format("DD MMM YYYY"),
         dayjs(p.end_date).format("DD MMM YYYY"),
         `${duration} hari`,
-        p.mood ? p.mood : "-",
+        p.mood ? (MOOD_LABELS_PDF[p.mood] || p.mood) : "-",
       ];
 
       rowData.forEach((val, i) => {
@@ -231,7 +253,7 @@ export const generatePDFReport = async ({
     Object.entries(symptomCounts).forEach(([key, count]) => {
       checkPageBreak(12);
       const percentage = Math.round((count / symptoms.length) * 100);
-      const label = SYMPTOM_LABELS[key] || key;
+      const label = SYMPTOM_LABELS_PDF[key] || key;
       pdf.setFontSize(9);
       pdf.setFont("helvetica", "normal");
       pdf.setTextColor(80, 75, 90);

@@ -10,9 +10,6 @@ try:
     inspector = inspect(engine)
     tables = inspector.get_table_names()
     print("Tables in database:", tables)
-    if "messages" in tables:
-        print("Success: 'messages' table exists!")
-    else:
-        print("Error: 'messages' table does NOT exist!")
 except Exception as e:
     print("Database connection error:", e)
+
